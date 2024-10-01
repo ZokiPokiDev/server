@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker-compose exec mysql mysqldump -u root -p $1 > /home/backups/db_backup.sql
+docker cp mysql:/home/backups/db_backup.sql /var/backups

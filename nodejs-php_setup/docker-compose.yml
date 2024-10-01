@@ -1,0 +1,122 @@
+services:
+  nest:
+    image: node:18
+    volumes:
+      - ./../../platform:/var/www/app
+    environment:
+      - NODE_ENV=dev
+    networks:
+      - app-network
+  strapi:
+    image: node:18
+    volumes:
+      - ./../../backoffice:/var/www/app
+    environment:
+      - NODE_ENV=dev
+    networks:
+      - app-network
+  express:
+    image: node:21
+    volumes:
+      - ./../../gateway:/var/www/app
+    environment:
+      - NODE_ENV=dev
+    networks:
+      - app-network
+  
+  web:
+    build:
+      context: .
+      dockerfile: php/fpm/Dockerfile
+    image: php
+    restart: "no"
+    ports:
+      - "9000:9000"
+    dns:
+      - 8.8.8.8
+    tty: true
+    working_dir: /var/www/api
+    volumes:
+      - ./../../web:/var/www/api
+      - ./../../web_profile/nastik:/var/www/api/html
+      - ./../../my_projects/network:/var/www/my_projects/network
+      - ./php/fpm/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+  nginx.web:
+    image: nginx:alpine
+    restart: "no"
+    ports:
+      - "90:80"
+      - "444:443"
+    volumes:
+      - ./../../web:/var/www/api
+      - ./../../web_profile/nastik:/var/www/api/html
+      - ./../../my_projects/network:/var/www/my_projects/network
+      - ./nginx/web/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - web
+    env_file:
+      - .env
+    working_dir: /var/www/api
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql
+    command:
+      - "--default-authentication-plugin=mysql_native_password"
+      - "--character-set-server=utf8"
+    restart: "no"
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - app-dbdata:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: "no"
+    depends_on:
+      - mysql
+    environment:
+      - PMA_ARBITRARY=1
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    command: redis-server
+    restart: "no"
+    networks:
+      - app-network
+  mail.metric:
+    image: schickling/mailcatcher
+    ports:
+      - "1026:1025"
+      - "1080:1080"
+    restart: "no"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  app-dbdata:
+    driver: local

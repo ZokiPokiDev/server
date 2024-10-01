@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -w /var/www/app web_profile $1

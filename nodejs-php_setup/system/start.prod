@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "** Production Server starting ..."
+docker-compose -f $PWD/server/docker/prod.dcompose.yml up -d --remove-orphans
+docker-compose -f $PWD/server/docker/prod.dcompose.yml run --rm -d web npm run build
+docker-compose -f $PWD/server/docker/prod.dcompose.yml run --rm -p 80:80 -d web npm run preview
+echo "** Server is up and runing ..."
+docker ps

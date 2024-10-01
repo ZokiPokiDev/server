@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker-compose exec api php -d xdebug.mode=coverage bin/phpunit --coverage-clover='reports/coverage/coverage.xml' --coverage-html='reports/coverage'

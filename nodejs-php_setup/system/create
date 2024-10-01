@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "** Start creationg ..."
+docker-compose -f $PWD/server/docker/docker-compose.yml run --rm express npm init
+docker-compose -f $PWD/server/docker/docker-compose.yml run --rm express npm install express --save
+
+docker-compose -f $PWD/server/docker/docker-compose.yml run --rm nest npm i -g @nestjs/cli
+docker-compose -f $PWD/server/docker/docker-compose.yml run --rm nest nest new platform
+
+docker-compose -f $PWD/server/docker/docker-compose.yml run --rm strapi npx create-strapi-app@latest strapi --quickstart --no-run --skip-cloud
+
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -w /var/www web_profile npm create vite@latest app -- --template react
+echo "** Build Done!"

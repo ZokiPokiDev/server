@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "** Build In Progress ..."
+docker compose -f $PWD/server/docker/docker-compose.yml build web
+
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -d nest npm i
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -d nest npm update
+
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -d express npm i
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -d express npm update
+
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -d strapi npm i
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -d strapi npm update
+
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -w /var/www/app web_profile npm i
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -w /var/www/app web_profile npm update
+echo "** Build Done!"

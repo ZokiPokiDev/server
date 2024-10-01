@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo "** Local Server starting ..."
+
+docker compose -f $PWD/server/docker/docker-compose.yml up -d mysql phpmyadmin redis mail.metric web nginx.web
+
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -w /var/www/app -p 80:3000 -d nest npm run start:dev
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -w /var/www/app/strapi -p 81:81 -d strapi npm run develop
+docker compose -f $PWD/server/docker/docker-compose.yml run --rm -w /var/www/app -p 82:82 -d express npm run dev
+
+echo " "
+echo "** Server is up and runing ..."
+echo " "
+docker ps
+echo " "
