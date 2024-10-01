@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "Restarting ..."
+source $PWD/server/docker/system/stop
+source $PWD/server/docker/system/start
+echo "Restart Done!"

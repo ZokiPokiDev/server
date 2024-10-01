@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "** Build In Progress ..."
+docker compose -f $PWD/server/docker/docker-compose.yml build web
+echo "** Build Done!"

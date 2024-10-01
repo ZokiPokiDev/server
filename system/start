@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "** Local Server starting ..."
+
+docker compose -f $PWD/server/docker/docker-compose.yml up -d web nginx.web mysql phpmyadmin
+
+echo " "
+echo "** Server is up and runing ..."
+echo " "
+docker ps
+echo " "

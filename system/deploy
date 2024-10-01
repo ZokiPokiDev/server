@@ -1,0 +1,8 @@
+#!/bin/bash
+
+__DIR__=$(dirname "$0")
+source $__DIR__/../.env
+
+sshpass -p $(grep PWD $__DIR__/../.env | cut -d '=' -f2) scp -r $__DIR__/../../../website/* root@87.106.235.209:/var/www/vhosts/flamboyant-ritchie.87-106-235-209.plesk.page/httpdocs
+
+echo "Deploy Done!"
